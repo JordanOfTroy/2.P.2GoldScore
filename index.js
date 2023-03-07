@@ -2,11 +2,29 @@ let courseSelector = document.getElementById('courseSelect')
 let playGolfButton = document.getElementById('playGolf')
 let playersArr = Array.from(document.getElementsByClassName('playerName'))
 let addNewPlayerButton = document.getElementById('addNewPlayer')
+let IdCount = 0
+
+class Player {
+    constructor(name, id = getNextID(), scores = []) {
+        this.name = name,
+        this.id = id,
+        this.scores = scores
+    }
+}
+class Game {
+    constructor(course = {}, players = []) {
+        this.course = course,
+        this.players = players
+    }
+}
+
+function getNextID () {
+    IdCount++
+    return IdCount
+}
 
 function setInitialLocalStorage () {
-    window.localStorage.setItem('golfScore', JSON.stringify({
-        course: null,
-    }))
+    window.localStorage.setItem('golfScore', JSON.stringify([]))
 }
 
 function checkForGolfScore () {
@@ -19,8 +37,13 @@ function getGolfScore () {
 
 function updateLocalStorage(data, arr) {
     checkForGolfScore() ?? setInitialLocalStorage()
-    console.log(data)
-    console.log(arr)
+
+   let players = []
+   arr.forEach(player => players.push(new Player(player)))
+   let game = new Game(data, players)
+   let golfScores = getGolfScore()
+   golfScores.push(game)
+    localStorage.setItem('golfScore', JSON.stringify(golfScores))
 }
 
 async function getCourse(obj) {
