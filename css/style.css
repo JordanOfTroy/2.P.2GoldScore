@@ -1,1 +1,10 @@
-/*# sourceMappingURL=style.css.map */
+.scoreTable {
+  border-collapse: collapse;
+  border: solid black 1px;
+}
+.scoreTable tr, .scoreTable th, .scoreTable td {
+  border: solid black 1px;
+}
+.scoreTable th, .scoreTable td {
+  padding: 2px 4px;
+}/*# sourceMappingURL=style.css.map */

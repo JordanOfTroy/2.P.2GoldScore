@@ -4,6 +4,7 @@ let playGolfButton = document.getElementById('playGolf')
 let playerInputs = document.querySelector('.playerInputs')
 let addNewPlayerButton = document.getElementById('addNewPlayer')
 let scoreCard = document.getElementById('scoreCard')
+let addScoreModal = document.getElementById('addScoreModal')
 let IdCount = 0
 
 class Player {
@@ -40,6 +41,13 @@ function getGolfScore () {
 function createTableData(parentEle, value) {
     let tableData = document.createElement('td')
     tableData.innerText = value
+    tableData.setAttribute('data-bs-toggle', 'modal')
+    tableData.setAttribute('data-bs-target', '#addScoreModal')
+
+    // tableData.addEventListener('click', (e) => {
+    //     console.log('you clicked', e.target)
+    // })
+
     parentEle.appendChild(tableData)
 }
 
@@ -52,6 +60,7 @@ function addScoreBoxes (parentEle, scoresArr, len) {
 function showScoreCard (parentEle) {
     let currentGame = getGolfScore()[0]
     let table = document.createElement('table')
+    table.setAttribute('class', 'scoreTable')
     let holes = document.createElement('tr')
     let yards = document.createElement('tr')
     let par = document.createElement('tr')
@@ -134,6 +143,12 @@ addNewPlayerButton.addEventListener('click', () => {
     playerInputs.appendChild(newPlayerInput)
 })
 
+
+addScoreModal.addEventListener('shown.bs.modal', (e) => {
+    console.log('is this working?', e.target)
+})
+
+getGolfScore() ? showScoreCard(scoreCard) : console.log('no score card')
 
 // async function get11819() {
 //     let response = await (await fetch('http://uxcobra.com/golfapi/course11819.txt')).json()

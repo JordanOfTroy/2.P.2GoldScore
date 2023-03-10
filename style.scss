@@ -1,0 +1,10 @@
+.scoreTable {
+    border-collapse: collapse;
+    border: solid black 1px;
+    tr, th, td{
+        border: solid black 1px;
+    }
+    th, td {
+        padding: 2px 4px;
+    }
+}
