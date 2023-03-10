@@ -39,11 +39,12 @@ function getGolfScore () {
 }
 
 function createTableData(parentEle, value) {
+    let playerName = parentEle.getAttribute('data-player-name')
     let tableData = document.createElement('td')
     tableData.innerText = value
     tableData.setAttribute('data-bs-toggle', 'modal')
     tableData.setAttribute('data-bs-target', '#addScoreModal')
-
+    tableData.setAttribute('data-player-name', `${playerName}`)
     // tableData.addEventListener('click', (e) => {
     //     console.log('you clicked', e.target)
     // })
@@ -90,8 +91,10 @@ function showScoreCard (parentEle) {
     currentGame.players.forEach((player) => {
         let {name, scores} = player
         let playerRow = document.createElement('tr')
+        playerRow.setAttribute('data-player-name', `${name}`)
         let playerHeader = document.createElement('th')
         playerHeader.innerText = name
+
         playerRow.appendChild(playerHeader)
 
         addScoreBoxes(playerRow, scores, currentGame.course.holes.length)
@@ -145,7 +148,7 @@ addNewPlayerButton.addEventListener('click', () => {
 
 
 addScoreModal.addEventListener('shown.bs.modal', (e) => {
-    console.log('is this working?', e.target)
+    console.log('is this working?', e.relatedTarget.getAttribute('data-player-name'))
 })
 
 getGolfScore() ? showScoreCard(scoreCard) : console.log('no score card')
