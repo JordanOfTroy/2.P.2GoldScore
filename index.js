@@ -45,6 +45,7 @@ function createTableData(parentEle, value, i) {
     tableData.innerText = value
     tableData.setAttribute('data-bs-toggle', 'modal')
     if (playerName) {
+        tableData.setAttribute('class', 'scoreBox')
         tableData.setAttribute('data-bs-target', '#addScoreModal')
         tableData.setAttribute('data-player-name', `${playerName}`)
         tableData.setAttribute('data-index', `${i}`)
@@ -129,17 +130,51 @@ async function getCourse(obj) {
     updateLocalStorage(jsonResponse.data, obj.players)
 }
 
-function updatePlayerScore (selectedPlayer, index) {
+function updateLocalStorageScores(playerName, ind, value) {
+    let course = getGolfScore()[0]
+    // console.log(player, ind, value, course)
+    console.log(`~~~~~~~`)
+    console.log(course)
+    
+    course.players.forEach((player) => {
+        console.log(player)
+        if (player.name === playerName) {
+            console.log(player)
+            player.scores[ind] = value
+            localStorage.setItem('golfScore', JSON.stringify([course]))
+        }
+    })
+    console.log(course)
+    console.log(`~~~~~~~`)
+    
+    
+}
+
+function updatePlayerScore () {
     let input = document.getElementById('newScoreInput')
-    console.log(selectedPlayer, index, input.value)
+    let scoreBoxArr = Array.from(document.getElementsByClassName('scoreBox'))
+    // console.log(selectedPlayer, index, input.value)
+    // console.log(scoreBoxArr)
+    scoreBoxArr.forEach((box) => {
+        let updating = box.getAttribute('data-selected-for-updating')
+        if (updating) {
+            let currentValue = input.value
+            let index = box.getAttribute('data-index')
+            let player = box.getAttribute('data-player-name')
+            box.innerHTML = input.value
+            box.removeAttribute('data-selected-for-updating')
+            input.value = ''
+            updateLocalStorageScores(player, index, currentValue)
+        }
+    })
 }
 
 
 playGolfButton.addEventListener('click', () => {
     let playersArr = Array.from(document.getElementsByClassName('playerName'))
     let course = courseSelector.value 
-    let players = []
     // console.log(playersArr)
+    let players = []
     playersArr.forEach(player => players.push(player.value))
     getCourse({course, players})
 })
@@ -154,14 +189,18 @@ addNewPlayerButton.addEventListener('click', () => {
 
 
 addScoreModal.addEventListener('shown.bs.modal', (e) => {
-    let selectedPlayer = e.relatedTarget.getAttribute('data-player-name')
-    let index = e.relatedTarget.getAttribute('data-index')
+    let scoreBox = e.relatedTarget
+    let selectedPlayer = scoreBox.getAttribute('data-player-name')
+    let index = scoreBox.getAttribute('data-index')
     modalHeader.innerText = `Add score for ${selectedPlayer}`
     let input = document.getElementById('newScoreInput')
     input.setAttribute('data-index', `${index}`)
 
+    scoreBox.setAttribute('data-selected-for-updating', true)
+
+
     document.getElementById('addNewScoreButton').addEventListener('click', () => {
-        updatePlayerScore(selectedPlayer, index)
+        updatePlayerScore()
     })
 })
 
