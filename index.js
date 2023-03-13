@@ -124,37 +124,25 @@ function updateLocalStorage(data, arr) {
 
 async function getCourse(obj) {
     const response = await fetch(`http://uxcobra.com/golfapi/course${obj.course}.txt`)
-    // console.log(response)
     const jsonResponse = await response.json()
-    // console.log(jsonResponse)
     updateLocalStorage(jsonResponse.data, obj.players)
 }
 
 function updateLocalStorageScores(playerName, ind, value) {
     let course = getGolfScore()[0]
-    // console.log(player, ind, value, course)
-    console.log(`~~~~~~~`)
-    console.log(course)
     
     course.players.forEach((player) => {
-        console.log(player)
         if (player.name === playerName) {
-            console.log(player)
             player.scores[ind] = value
             localStorage.setItem('golfScore', JSON.stringify([course]))
         }
     })
-    console.log(course)
-    console.log(`~~~~~~~`)
-    
-    
 }
 
 function updatePlayerScore () {
     let input = document.getElementById('newScoreInput')
     let scoreBoxArr = Array.from(document.getElementsByClassName('scoreBox'))
-    // console.log(selectedPlayer, index, input.value)
-    // console.log(scoreBoxArr)
+
     scoreBoxArr.forEach((box) => {
         let updating = box.getAttribute('data-selected-for-updating')
         if (updating) {
@@ -173,7 +161,6 @@ function updatePlayerScore () {
 playGolfButton.addEventListener('click', () => {
     let playersArr = Array.from(document.getElementsByClassName('playerName'))
     let course = courseSelector.value 
-    // console.log(playersArr)
     let players = []
     playersArr.forEach(player => players.push(player.value))
     getCourse({course, players})
