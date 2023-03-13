@@ -5,6 +5,7 @@ let playerInputs = document.querySelector('.playerInputs')
 let addNewPlayerButton = document.getElementById('addNewPlayer')
 let scoreCard = document.getElementById('scoreCard')
 let addScoreModal = document.getElementById('addScoreModal')
+let modalHeader = document.getElementById('addScoreModalLabel')
 let IdCount = 0
 
 class Player {
@@ -38,23 +39,23 @@ function getGolfScore () {
     return JSON.parse(localStorage.getItem('golfScore'))
 }
 
-function createTableData(parentEle, value) {
+function createTableData(parentEle, value, i) {
     let playerName = parentEle.getAttribute('data-player-name')
     let tableData = document.createElement('td')
     tableData.innerText = value
     tableData.setAttribute('data-bs-toggle', 'modal')
-    tableData.setAttribute('data-bs-target', '#addScoreModal')
-    tableData.setAttribute('data-player-name', `${playerName}`)
-    // tableData.addEventListener('click', (e) => {
-    //     console.log('you clicked', e.target)
-    // })
+    if (playerName) {
+        tableData.setAttribute('data-bs-target', '#addScoreModal')
+        tableData.setAttribute('data-player-name', `${playerName}`)
+        tableData.setAttribute('data-index', `${i}`)
+    }
 
     parentEle.appendChild(tableData)
 }
 
 function addScoreBoxes (parentEle, scoresArr, len) {
     for (let i = 0; i < len; i++) {
-        createTableData(parentEle, scoresArr[i] ? scoresArr[i] : '')
+        createTableData(parentEle, scoresArr[i] ? scoresArr[i] : '', i)
     }
 }
 
@@ -128,6 +129,11 @@ async function getCourse(obj) {
     updateLocalStorage(jsonResponse.data, obj.players)
 }
 
+function updatePlayerScore (selectedPlayer, index) {
+    let input = document.getElementById('newScoreInput')
+    console.log(selectedPlayer, index, input.value)
+}
+
 
 playGolfButton.addEventListener('click', () => {
     let playersArr = Array.from(document.getElementsByClassName('playerName'))
@@ -148,7 +154,15 @@ addNewPlayerButton.addEventListener('click', () => {
 
 
 addScoreModal.addEventListener('shown.bs.modal', (e) => {
-    console.log('is this working?', e.relatedTarget.getAttribute('data-player-name'))
+    let selectedPlayer = e.relatedTarget.getAttribute('data-player-name')
+    let index = e.relatedTarget.getAttribute('data-index')
+    modalHeader.innerText = `Add score for ${selectedPlayer}`
+    let input = document.getElementById('newScoreInput')
+    input.setAttribute('data-index', `${index}`)
+
+    document.getElementById('addNewScoreButton').addEventListener('click', () => {
+        updatePlayerScore(selectedPlayer, index)
+    })
 })
 
 getGolfScore() ? showScoreCard(scoreCard) : console.log('no score card')
