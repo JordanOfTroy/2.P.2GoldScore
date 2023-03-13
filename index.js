@@ -130,17 +130,41 @@ async function getCourse(obj) {
     updateLocalStorage(jsonResponse.data, obj.players)
 }
 
-function updatePlayerScore (selectedPlayer, index) {
+function updateLocalStorageScores(playerName, ind, value) {
+    let course = getGolfScore()[0]
+    // console.log(player, ind, value, course)
+    console.log(`~~~~~~~`)
+    console.log(course)
+    
+    course.players.forEach((player) => {
+        console.log(player)
+        if (player.name === playerName) {
+            console.log(player)
+            player.scores[ind] = value
+            localStorage.setItem('golfScore', JSON.stringify([course]))
+        }
+    })
+    console.log(course)
+    console.log(`~~~~~~~`)
+    
+    
+}
+
+function updatePlayerScore () {
     let input = document.getElementById('newScoreInput')
     let scoreBoxArr = Array.from(document.getElementsByClassName('scoreBox'))
-    console.log(selectedPlayer, index, input.value)
-    console.log(scoreBoxArr)
+    // console.log(selectedPlayer, index, input.value)
+    // console.log(scoreBoxArr)
     scoreBoxArr.forEach((box) => {
         let updating = box.getAttribute('data-selected-for-updating')
         if (updating) {
+            let currentValue = input.value
+            let index = box.getAttribute('data-index')
+            let player = box.getAttribute('data-player-name')
             box.innerHTML = input.value
             box.removeAttribute('data-selected-for-updating')
             input.value = ''
+            updateLocalStorageScores(player, index, currentValue)
         }
     })
 }
@@ -149,8 +173,8 @@ function updatePlayerScore (selectedPlayer, index) {
 playGolfButton.addEventListener('click', () => {
     let playersArr = Array.from(document.getElementsByClassName('playerName'))
     let course = courseSelector.value 
-    let players = []
     // console.log(playersArr)
+    let players = []
     playersArr.forEach(player => players.push(player.value))
     getCourse({course, players})
 })
@@ -176,7 +200,7 @@ addScoreModal.addEventListener('shown.bs.modal', (e) => {
 
 
     document.getElementById('addNewScoreButton').addEventListener('click', () => {
-        updatePlayerScore(selectedPlayer, index)
+        updatePlayerScore()
     })
 })
 
