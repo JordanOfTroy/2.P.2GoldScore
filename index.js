@@ -185,7 +185,6 @@ addScoreModal.addEventListener('shown.bs.modal', (e) => {
 
     scoreBox.setAttribute('data-selected-for-updating', true)
 
-
     document.getElementById('addNewScoreButton').addEventListener('click', () => {
         updatePlayerScore()
     })
