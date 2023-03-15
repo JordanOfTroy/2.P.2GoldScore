@@ -15,10 +15,11 @@ const WOMENS = 'women'
 const AUTOCHANGE = 'auto change location'
 
 class Player {
-    constructor(name, id = getNextID(), scores = []) {
-        this.name = name,
+    constructor(obj, id = getNextID(), scores = []) {
+        this.name = obj.name,
         this.id = id,
-        this.scores = scores
+        this.scores = scores,
+        this.tee = obj.tee
     }
 }
 class Game {
@@ -121,7 +122,10 @@ function updateLocalStorage(data, arr) {
     let game = new Game(data, players)
     let golfScores = []
     
-    arr.forEach(player => players.push(new Player(player)))
+    arr.forEach(player => {
+        console.log(player)
+        players.push(new Player(player))
+    })
     golfScores.push(game)
 
     localStorage.setItem('golfScore', JSON.stringify(golfScores))
@@ -134,12 +138,14 @@ async function getCourse(obj) {
     updateLocalStorage(jsonResponse.data, obj.players)
 }
 
-function updateLocalStorageScores(playerName, ind, value) {
+function updateLocalStorageScores(playerObj, ind, value) {
+    let {name, tee} = playerObj
     let course = getGolfScore()[0]
     
     course.players.forEach((player) => {
-        if (player.name === playerName) {
+        if (player.name === name) {
             player.scores[ind] = value
+            plater.tee = tee
             localStorage.setItem('golfScore', JSON.stringify([course]))
         }
     })
@@ -165,12 +171,30 @@ function updatePlayerScore () {
 
 
 playGolfButton.addEventListener('click', () => {
-    let playersArr = Array.from(document.getElementsByClassName('playerName'))
+    let playerNamesArr = Array.from(document.getElementsByClassName('playerName'))
+    // console.log(playerNamesArr)
+    let playerTeeBoxArr = Array.from(document.getElementsByClassName('teeBox'))
+    // console.log(playerTeeBoxArr)
     let course = courseSelector.value 
     let players = []
-    playersArr.forEach(player => players.push(player.value))
+
+    playerNamesArr.forEach((player, ind) => {
+        let playerObj = {}
+        playerObj.name = player.value
+        playerObj.tee = playerTeeBoxArr[ind].value
+        console.log(playerObj)
+        players.push(playerObj)
+    })
+
     getCourse({course, players})
 })
+// playGolfButton.addEventListener('click', () => {
+//     let playersArr = Array.from(document.getElementsByClassName('playerName'))
+//     let course = courseSelector.value 
+//     let players = []
+//     playersArr.forEach(player => players.push(player.value))
+//     getCourse({course, players})
+// })
 
 
 addNewPlayerButton.addEventListener('click', () => {
