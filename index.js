@@ -61,44 +61,57 @@ function createTableData(parentEle, value, i) {
     parentEle.appendChild(tableData)
 }
 
+function addTeaboxYardage (parentEle, arr, str) {
+    let teeBoxYardage = document.createElement('tr')
+
+    arr.forEach((obj) => {
+        let courseTeeBoxes = obj.teeBoxes
+        courseTeeBoxes.forEach(box => {
+            if (box.teeType === str) {
+                console.log(box)
+                let yardageBox = document.createElement('td')
+                yardageBox.innerText = box.yards
+                teeBoxYardage.appendChild(yardageBox)
+            } 
+        })
+    })
+
+    parentEle.prepend(teeBoxYardage)
+}
+
 function addScoreBoxes (parentEle, scoresArr, len) {
     for (let i = 0; i < len; i++) {
         createTableData(parentEle, scoresArr[i] ? scoresArr[i] : '', i)
     }
 }
 
+
 function showScoreCard (parentEle) {
     let currentGame = getGolfScore()[0]
     let table = document.createElement('table')
     table.setAttribute('class', 'scoreTable')
     let holes = document.createElement('tr')
-    let yards = document.createElement('tr')
     let par = document.createElement('tr')
     let holesHeader = document.createElement('th')
-    let yardsHeader = document.createElement('th')
     let parHeader = document.createElement('th')
 
     holesHeader.innerText = 'Holes'
-    yardsHeader.innerText = 'Yards'
     parHeader.innerText = 'Par'
 
     holes.appendChild(holesHeader)
-    yards.appendChild(yardsHeader)
     par.appendChild(parHeader)
 
 
     currentGame.course.holes.forEach((hole) => {
         createTableData(holes, hole.hole)
-        createTableData(yards, hole.changeLocations[0].yards)
         createTableData(par, hole.changeLocations[0].par)
     })
 
     table.appendChild(holes)
-    table.appendChild(yards)
     table.appendChild(par)
 
     currentGame.players.forEach((player) => {
-        let {name, scores} = player
+        let {name, scores, tee} = player
         let playerRow = document.createElement('tr')
         playerRow.setAttribute('data-player-name', `${name}`)
         let playerHeader = document.createElement('th')
@@ -106,11 +119,12 @@ function showScoreCard (parentEle) {
 
         playerRow.appendChild(playerHeader)
 
+        addTeaboxYardage(table, currentGame.course.holes, tee)
+
         addScoreBoxes(playerRow, scores, currentGame.course.holes.length)
 
         table.appendChild(playerRow)
     })
-
 
     parentEle.appendChild(table)
 }
