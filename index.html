@@ -15,7 +15,7 @@
     <script defer src="./index.js"></script>
     <title>2.P.2 Golf Score</title>
 </head>
-<body>
+<body class="container-fluid">
     <div class="header">
         <select name="courses" id="courseSelect">
             <option value="" disabled selected>Select your course</option>
@@ -24,11 +24,47 @@
             <option value="29002" class="courseoption">Spanish Oaks Golf Course</option>
         </select>
         <div class="playerNames">
-            <div class="playerInputs">
-                <input type="text" class="playerName">
-                <input type="text" class="playerName">
-                <input type="text" class="playerName">
-                <input type="text" class="playerName">
+            <div class="playerInputs d-flex flex-wrap">
+                <div class="playerInput d-flex flex-column">
+                    <input type="text" class="playerName">
+                    <select name="teaBoxSelect" id="" class="teeBox">
+                        <option value="" disabled selected>Select Tee Box</option>
+                        <option value="pro" class="teaBoxOption">Professional</option>
+                        <option value="champion" class="teaBoxOption">Champion</option>
+                        <option value="men" class="teaBoxOption">Men's</option>
+                        <option value="women" class="teaBoxOption">Women's</option>
+                    </select>
+                </div>
+                <div class="playerInput d-flex flex-column">
+                    <input type="text" class="playerName">
+                    <select name="teaBoxSelect" id="" class="teeBox">
+                        <option value="" disabled selected>Select Tee Box</option>
+                        <option value="pro" class="teaBoxOption">Professional</option>
+                        <option value="champion" class="teaBoxOption">Champion</option>
+                        <option value="men" class="teaBoxOption">Men's</option>
+                        <option value="women" class="teaBoxOption">Women's</option>
+                    </select>
+                </div>
+                <div class="playerInput d-flex flex-column">
+                    <input type="text" class="playerName">
+                    <select name="teaBoxSelect" id="" class="teeBox">
+                        <option value="" disabled selected>Select Tee Box</option>
+                        <option value="pro" class="teaBoxOption">Professional</option>
+                        <option value="champion" class="teaBoxOption">Champion</option>
+                        <option value="men" class="teaBoxOption">Men's</option>
+                        <option value="women" class="teaBoxOption">Women's</option>
+                    </select>
+                </div>
+                <div class="playerInput d-flex flex-column">
+                    <input type="text" class="playerName">
+                    <select name="teaBoxSelect" id="" class="teeBox">
+                        <option value="" disabled selected>Select Tee Box</option>
+                        <option value="pro" class="teaBoxOption">Professional</option>
+                        <option value="champion" class="teaBoxOption">Champion</option>
+                        <option value="men" class="teaBoxOption">Men's</option>
+                        <option value="women" class="teaBoxOption">Women's</option>
+                    </select>
+                </div>
             </div>
             <button id="addNewPlayer"><i class="fa-solid fa-plus"></i> Add Player</button>
         </div>

@@ -8,6 +8,12 @@ let addScoreModal = document.getElementById('addScoreModal')
 let modalHeader = document.getElementById('addScoreModalLabel')
 let IdCount = 0
 
+const PRO = 'pro'
+const CHAMP = 'champion'
+const MENS = 'men'
+const WOMENS = 'women'
+const AUTOCHANGE = 'auto change location'
+
 class Player {
     constructor(name, id = getNextID(), scores = []) {
         this.name = name,
@@ -168,10 +174,48 @@ playGolfButton.addEventListener('click', () => {
 
 
 addNewPlayerButton.addEventListener('click', () => {
+    let playerDiv = document.createElement('div')
+    playerDiv.setAttribute('class', 'playerInput d-flex flex-column')
+
     let newPlayerInput = document.createElement('input')
     newPlayerInput.setAttribute('class', 'playerName')
     newPlayerInput.setAttribute('type', 'text')
-    playerInputs.appendChild(newPlayerInput)
+
+    let teaBoxSelect = document.createElement('select')
+    teaBoxSelect.setAttribute('class', 'teeBox')
+
+    let defaultOption = document.createElement('option')
+    defaultOption.setAttribute('value', '')
+    defaultOption.setAttribute('disabled', true)
+    defaultOption.setAttribute('selected', true)
+    defaultOption.innerText = 'Select Tee Box'
+    
+    let proOption = document.createElement('option')
+    proOption.setAttribute('value', 'pro')
+    proOption.innerText = 'Professional'
+    
+    let championOption = document.createElement('option')
+    championOption.setAttribute('value', 'champion')
+    championOption.innerText = 'Champion'
+    
+    let mensOption = document.createElement('option')
+    mensOption.setAttribute('value', 'men')
+    mensOption.innerText = 'Men\'s'
+    
+    let womensOption = document.createElement('option')
+    womensOption.setAttribute('value', 'women')
+    womensOption.innerText = 'Women\'s'
+
+    teaBoxSelect.appendChild(defaultOption)
+    teaBoxSelect.appendChild(proOption)
+    teaBoxSelect.appendChild(championOption)
+    teaBoxSelect.appendChild(mensOption)
+    teaBoxSelect.appendChild(womensOption)
+
+    playerDiv.appendChild(newPlayerInput)
+    playerDiv.appendChild(teaBoxSelect)
+
+    playerInputs.appendChild(playerDiv)
 })
 
 
