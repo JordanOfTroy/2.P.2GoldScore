@@ -7,6 +7,7 @@ let scoreCard = document.getElementById('scoreCard')
 let addScoreModal = document.getElementById('addScoreModal')
 let modalHeader = document.getElementById('addScoreModalLabel')
 let IdCount = 0
+let scoreButton = document.getElementById('scoreButton')
 
 const PRO = 'pro'
 const CHAMP = 'champion'
@@ -119,7 +120,7 @@ function addScoreBoxes (parentEle, scoresArr, len) {
 function showScoreCard (parentEle) {
     let currentGame = getGolfScore()[0]
     let table = document.createElement('table')
-    table.setAttribute('class', 'scoreTable')
+    table.setAttribute('class', 'scoreTable table')
     let holes = document.createElement('tr')
     let par = document.createElement('tr')
     let holesHeader = document.createElement('th')
@@ -215,9 +216,7 @@ function updatePlayerScore () {
 
 playGolfButton.addEventListener('click', () => {
     let playerNamesArr = Array.from(document.getElementsByClassName('playerName'))
-    // console.log(playerNamesArr)
     let playerTeeBoxArr = Array.from(document.getElementsByClassName('teeBox'))
-    // console.log(playerTeeBoxArr)
     let course = courseSelector.value 
     let players = []
 
@@ -231,18 +230,10 @@ playGolfButton.addEventListener('click', () => {
 
     getCourse({course, players})
 })
-// playGolfButton.addEventListener('click', () => {
-//     let playersArr = Array.from(document.getElementsByClassName('playerName'))
-//     let course = courseSelector.value 
-//     let players = []
-//     playersArr.forEach(player => players.push(player.value))
-//     getCourse({course, players})
-// })
-
 
 addNewPlayerButton.addEventListener('click', () => {
     let playerDiv = document.createElement('div')
-    playerDiv.setAttribute('class', 'playerInput d-flex flex-column')
+    playerDiv.setAttribute('class', 'playerInput d-flex flex-column m-1')
 
     let newPlayerInput = document.createElement('input')
     newPlayerInput.setAttribute('class', 'playerName')
@@ -285,7 +276,6 @@ addNewPlayerButton.addEventListener('click', () => {
     playerInputs.appendChild(playerDiv)
 })
 
-
 addScoreModal.addEventListener('shown.bs.modal', (e) => {
     let scoreBox = e.relatedTarget
     let selectedPlayer = scoreBox.getAttribute('data-player-name')
@@ -299,7 +289,16 @@ addScoreModal.addEventListener('shown.bs.modal', (e) => {
 
     document.getElementById('addNewScoreButton').addEventListener('click', () => {
         updatePlayerScore()
+
+        // ger player socres
+        // player HCPs
+        //--- set data-player name to hcpBoxes for easy access
+        // add up scores and deduct HCPs
     })
+})
+
+scoreButton.addEventListener('click', () => {
+    console.log('you want to score the game?')
 })
 
 getGolfScore() ? showScoreCard(scoreCard) : console.log('no score card')
