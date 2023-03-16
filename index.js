@@ -76,7 +76,7 @@ function addTeaboxYardage (parentEle, siblingEle, arr, str) {
             if (box.teeType === str) {
                 let yardageBox = document.createElement('td')
                 yardageBox.innerText = box.yards
-                yardageBox.setAttribute('class', 'subtleHeader')
+                yardageBox.setAttribute('class', 'subtleHeader teabox')
                 
                 teeBoxYardage.appendChild(yardageBox)
             } 
@@ -86,7 +86,7 @@ function addTeaboxYardage (parentEle, siblingEle, arr, str) {
     parentEle.insertBefore(teeBoxYardage, siblingEle)
 }
 
-function addHCP(parentEle, siblingEle, arr, str) {
+function addHCP(parentEle, siblingEle, arr, str, player) {
     let hcpBox = document.createElement('tr')
     
     let hcpHeader = document.createElement('th')
@@ -99,7 +99,8 @@ function addHCP(parentEle, siblingEle, arr, str) {
         courseTeeBoxes.forEach(box => {
             if (box.teeType === str) {
                 let hcp = document.createElement('td')
-                hcp.setAttribute('class', 'subtleHeader')
+                hcp.setAttribute('class', 'subtleHeader hcp')
+                hcp.setAttribute('data-hcp-for', `${player}`)
                 hcp.innerText = box.hcp
 
                 hcpBox.appendChild(hcp)
@@ -151,9 +152,9 @@ function showScoreCard (parentEle) {
         playerRow.appendChild(playerHeader)
         table.appendChild(playerRow)
         
-        addScoreBoxes(playerRow, scores, currentGame.course.holes.length)
+        addScoreBoxes(playerRow, scores, currentGame.course.holes.length, name)
         addTeaboxYardage(table, playerRow, currentGame.course.holes, tee)
-        addHCP(table, playerRow, currentGame.course.holes, tee)
+        addHCP(table, playerRow, currentGame.course.holes, tee, name)
     })
     
     parentEle.appendChild(table)
@@ -290,15 +291,28 @@ addScoreModal.addEventListener('shown.bs.modal', (e) => {
     document.getElementById('addNewScoreButton').addEventListener('click', () => {
         updatePlayerScore()
 
-        // ger player socres
-        // player HCPs
-        //--- set data-player name to hcpBoxes for easy access
-        // add up scores and deduct HCPs
     })
 })
 
 scoreButton.addEventListener('click', () => {
     console.log('you want to score the game?')
+    // ger player socres
+    // player HCPs
+    //--- set data-player name to hcpBoxes for easy access
+    // add up scores and deduct HCPs
+    let players = getGolfScore()[0].players
+
+    let hcpArr = Array.from(document.querySelectorAll('.hcp'))
+    // console.log(hcpArr)
+  
+    players.forEach((player, ind) => {
+        for (let i = 0; i < hcpArr.length; i++) {
+            if (hcpArr[i].dataset.hcpFor === player.name) {
+                console.log(hcpArr[i].dataset.hcpFor)
+                console.log('what should I do now?')
+            }
+        }
+    })
 })
 
 getGolfScore() ? showScoreCard(scoreCard) : console.log('no score card')
