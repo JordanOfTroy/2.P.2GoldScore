@@ -61,22 +61,52 @@ function createTableData(parentEle, value, i) {
     parentEle.appendChild(tableData)
 }
 
-function addTeaboxYardage (parentEle, arr, str) {
+function addTeaboxYardage (parentEle, siblingEle, arr, str) {
     let teeBoxYardage = document.createElement('tr')
+
+    let yardageHeader = document.createElement('th')
+    yardageHeader.setAttribute('class', 'subtleHeader')
+    yardageHeader.innerText = 'Yards'
+    teeBoxYardage.appendChild(yardageHeader)
 
     arr.forEach((obj) => {
         let courseTeeBoxes = obj.teeBoxes
         courseTeeBoxes.forEach(box => {
             if (box.teeType === str) {
-                console.log(box)
                 let yardageBox = document.createElement('td')
                 yardageBox.innerText = box.yards
+                yardageBox.setAttribute('class', 'subtleHeader')
+                
                 teeBoxYardage.appendChild(yardageBox)
             } 
         })
     })
+    
+    parentEle.insertBefore(teeBoxYardage, siblingEle)
+}
 
-    parentEle.prepend(teeBoxYardage)
+function addHCP(parentEle, siblingEle, arr, str) {
+    let hcpBox = document.createElement('tr')
+    
+    let hcpHeader = document.createElement('th')
+    hcpHeader.setAttribute('class', 'subtleHeader')
+    hcpHeader.innerText = 'HCP'
+    hcpBox.appendChild(hcpHeader)
+    
+    arr.forEach((obj) => {
+        let courseTeeBoxes = obj.teeBoxes
+        courseTeeBoxes.forEach(box => {
+            if (box.teeType === str) {
+                let hcp = document.createElement('td')
+                hcp.setAttribute('class', 'subtleHeader')
+                hcp.innerText = box.hcp
+
+                hcpBox.appendChild(hcp)
+            } 
+        })
+    })
+
+    parentEle.insertBefore(hcpBox, siblingEle)
 }
 
 function addScoreBoxes (parentEle, scoresArr, len) {
@@ -109,23 +139,22 @@ function showScoreCard (parentEle) {
 
     table.appendChild(holes)
     table.appendChild(par)
-
+    
     currentGame.players.forEach((player) => {
         let {name, scores, tee} = player
         let playerRow = document.createElement('tr')
         playerRow.setAttribute('data-player-name', `${name}`)
         let playerHeader = document.createElement('th')
         playerHeader.innerText = name
-
+        
         playerRow.appendChild(playerHeader)
-
-        addTeaboxYardage(table, currentGame.course.holes, tee)
-
-        addScoreBoxes(playerRow, scores, currentGame.course.holes.length)
-
         table.appendChild(playerRow)
+        
+        addScoreBoxes(playerRow, scores, currentGame.course.holes.length)
+        addTeaboxYardage(table, playerRow, currentGame.course.holes, tee)
+        addHCP(table, playerRow, currentGame.course.holes, tee)
     })
-
+    
     parentEle.appendChild(table)
 }
 
