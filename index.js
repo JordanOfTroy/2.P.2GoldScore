@@ -8,11 +8,18 @@ let addScoreModal = document.getElementById('addScoreModal')
 let modalHeader = document.getElementById('addScoreModalLabel')
 let IdCount = 0
 
+const PRO = 'pro'
+const CHAMP = 'champion'
+const MENS = 'men'
+const WOMENS = 'women'
+const AUTOCHANGE = 'auto change location'
+
 class Player {
-    constructor(name, id = getNextID(), scores = []) {
-        this.name = name,
+    constructor(obj, id = getNextID(), scores = []) {
+        this.name = obj.name,
         this.id = id,
-        this.scores = scores
+        this.scores = scores,
+        this.tee = obj.tee
     }
 }
 class Game {
@@ -54,44 +61,57 @@ function createTableData(parentEle, value, i) {
     parentEle.appendChild(tableData)
 }
 
+function addTeaboxYardage (parentEle, arr, str) {
+    let teeBoxYardage = document.createElement('tr')
+
+    arr.forEach((obj) => {
+        let courseTeeBoxes = obj.teeBoxes
+        courseTeeBoxes.forEach(box => {
+            if (box.teeType === str) {
+                console.log(box)
+                let yardageBox = document.createElement('td')
+                yardageBox.innerText = box.yards
+                teeBoxYardage.appendChild(yardageBox)
+            } 
+        })
+    })
+
+    parentEle.prepend(teeBoxYardage)
+}
+
 function addScoreBoxes (parentEle, scoresArr, len) {
     for (let i = 0; i < len; i++) {
         createTableData(parentEle, scoresArr[i] ? scoresArr[i] : '', i)
     }
 }
 
+
 function showScoreCard (parentEle) {
     let currentGame = getGolfScore()[0]
     let table = document.createElement('table')
     table.setAttribute('class', 'scoreTable')
     let holes = document.createElement('tr')
-    let yards = document.createElement('tr')
     let par = document.createElement('tr')
     let holesHeader = document.createElement('th')
-    let yardsHeader = document.createElement('th')
     let parHeader = document.createElement('th')
 
     holesHeader.innerText = 'Holes'
-    yardsHeader.innerText = 'Yards'
     parHeader.innerText = 'Par'
 
     holes.appendChild(holesHeader)
-    yards.appendChild(yardsHeader)
     par.appendChild(parHeader)
 
 
     currentGame.course.holes.forEach((hole) => {
         createTableData(holes, hole.hole)
-        createTableData(yards, hole.changeLocations[0].yards)
         createTableData(par, hole.changeLocations[0].par)
     })
 
     table.appendChild(holes)
-    table.appendChild(yards)
     table.appendChild(par)
 
     currentGame.players.forEach((player) => {
-        let {name, scores} = player
+        let {name, scores, tee} = player
         let playerRow = document.createElement('tr')
         playerRow.setAttribute('data-player-name', `${name}`)
         let playerHeader = document.createElement('th')
@@ -99,11 +119,12 @@ function showScoreCard (parentEle) {
 
         playerRow.appendChild(playerHeader)
 
+        addTeaboxYardage(table, currentGame.course.holes, tee)
+
         addScoreBoxes(playerRow, scores, currentGame.course.holes.length)
 
         table.appendChild(playerRow)
     })
-
 
     parentEle.appendChild(table)
 }
@@ -115,7 +136,10 @@ function updateLocalStorage(data, arr) {
     let game = new Game(data, players)
     let golfScores = []
     
-    arr.forEach(player => players.push(new Player(player)))
+    arr.forEach(player => {
+        console.log(player)
+        players.push(new Player(player))
+    })
     golfScores.push(game)
 
     localStorage.setItem('golfScore', JSON.stringify(golfScores))
@@ -128,12 +152,14 @@ async function getCourse(obj) {
     updateLocalStorage(jsonResponse.data, obj.players)
 }
 
-function updateLocalStorageScores(playerName, ind, value) {
+function updateLocalStorageScores(playerObj, ind, value) {
+    let {name, tee} = playerObj
     let course = getGolfScore()[0]
     
     course.players.forEach((player) => {
-        if (player.name === playerName) {
+        if (player.name === name) {
             player.scores[ind] = value
+            plater.tee = tee
             localStorage.setItem('golfScore', JSON.stringify([course]))
         }
     })
@@ -159,19 +185,75 @@ function updatePlayerScore () {
 
 
 playGolfButton.addEventListener('click', () => {
-    let playersArr = Array.from(document.getElementsByClassName('playerName'))
+    let playerNamesArr = Array.from(document.getElementsByClassName('playerName'))
+    // console.log(playerNamesArr)
+    let playerTeeBoxArr = Array.from(document.getElementsByClassName('teeBox'))
+    // console.log(playerTeeBoxArr)
     let course = courseSelector.value 
     let players = []
-    playersArr.forEach(player => players.push(player.value))
+
+    playerNamesArr.forEach((player, ind) => {
+        let playerObj = {}
+        playerObj.name = player.value
+        playerObj.tee = playerTeeBoxArr[ind].value
+        console.log(playerObj)
+        players.push(playerObj)
+    })
+
     getCourse({course, players})
 })
+// playGolfButton.addEventListener('click', () => {
+//     let playersArr = Array.from(document.getElementsByClassName('playerName'))
+//     let course = courseSelector.value 
+//     let players = []
+//     playersArr.forEach(player => players.push(player.value))
+//     getCourse({course, players})
+// })
 
 
 addNewPlayerButton.addEventListener('click', () => {
+    let playerDiv = document.createElement('div')
+    playerDiv.setAttribute('class', 'playerInput d-flex flex-column')
+
     let newPlayerInput = document.createElement('input')
     newPlayerInput.setAttribute('class', 'playerName')
     newPlayerInput.setAttribute('type', 'text')
-    playerInputs.appendChild(newPlayerInput)
+
+    let teaBoxSelect = document.createElement('select')
+    teaBoxSelect.setAttribute('class', 'teeBox')
+
+    let defaultOption = document.createElement('option')
+    defaultOption.setAttribute('value', '')
+    defaultOption.setAttribute('disabled', true)
+    defaultOption.setAttribute('selected', true)
+    defaultOption.innerText = 'Select Tee Box'
+    
+    let proOption = document.createElement('option')
+    proOption.setAttribute('value', 'pro')
+    proOption.innerText = 'Professional'
+    
+    let championOption = document.createElement('option')
+    championOption.setAttribute('value', 'champion')
+    championOption.innerText = 'Champion'
+    
+    let mensOption = document.createElement('option')
+    mensOption.setAttribute('value', 'men')
+    mensOption.innerText = 'Men\'s'
+    
+    let womensOption = document.createElement('option')
+    womensOption.setAttribute('value', 'women')
+    womensOption.innerText = 'Women\'s'
+
+    teaBoxSelect.appendChild(defaultOption)
+    teaBoxSelect.appendChild(proOption)
+    teaBoxSelect.appendChild(championOption)
+    teaBoxSelect.appendChild(mensOption)
+    teaBoxSelect.appendChild(womensOption)
+
+    playerDiv.appendChild(newPlayerInput)
+    playerDiv.appendChild(teaBoxSelect)
+
+    playerInputs.appendChild(playerDiv)
 })
 
 
