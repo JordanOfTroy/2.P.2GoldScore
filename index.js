@@ -295,24 +295,43 @@ addScoreModal.addEventListener('shown.bs.modal', (e) => {
 })
 
 scoreButton.addEventListener('click', () => {
-    console.log('you want to score the game?')
-    // ger player socres
-    // player HCPs
-    //--- set data-player name to hcpBoxes for easy access
-    // add up scores and deduct HCPs
     let players = getGolfScore()[0].players
-
     let hcpArr = Array.from(document.querySelectorAll('.hcp'))
-    // console.log(hcpArr)
-  
+    let playerScoresArr = Array.from(document.querySelectorAll('.scoreBox'))
+    let outcomeArr = []
+
+    function addValues (total, num) {
+        return total += num
+    }
+
+    function stripOutValues (arr) {
+        let values = []
+        arr.forEach((ele) => {
+            values.push(Number(ele.innerText))
+        })
+        return values
+    }
+   
     players.forEach((player, ind) => {
-        for (let i = 0; i < hcpArr.length; i++) {
-            if (hcpArr[i].dataset.hcpFor === player.name) {
-                console.log(hcpArr[i].dataset.hcpFor)
-                console.log('what should I do now?')
-            }
-        }
+        let HCPs = hcpArr.filter((ele) => {
+            return ele.dataset.hcpFor === player.name
+        })
+        let HCPsValue = stripOutValues(HCPs).reduce(addValues)
+        
+        let playerScores = playerScoresArr.filter((ele) => {
+            return ele.dataset.playerName === player.name
+        })
+        let playerScoreValue = stripOutValues(playerScores).reduce(addValues)
+
+        outcomeArr.push({
+            player: player,
+            HCP: HCPsValue,
+            playerScore: playerScoreValue
+        })
+        
     })
+
+    console.log(outcomeArr)
 })
 
 getGolfScore() ? showScoreCard(scoreCard) : console.log('no score card')
