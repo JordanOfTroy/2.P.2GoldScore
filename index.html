@@ -74,7 +74,7 @@
         <div id="scoreCard"></div>
     </div>
     <div class="section">
-        <button class="btn btn-success mt-3" id="scoreButton">Score game</button>
+        <button class="btn btn-success mt-3" id="scoreButton" data-bs-toggle="modal" data-bs-target="#endGameModal">Score game</button>
     </div>
 
     <!-- Button trigger modal -->
@@ -96,6 +96,24 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
           <button type="button" class="btn btn-success" id="addNewScoreButton" data-bs-dismiss="modal"><i class="fa-solid fa-plus"></i> Add Score</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--Endgame Modal -->
+  <div class="modal fade" id="endGameModal" tabindex="-1" aria-labelledby="endGameModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="endGameModalLabel">Congratulation!</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div id="endGameModalBody" class="modal-body">
+         <!-- scores getting added here -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </div>
       </div>
     </div>

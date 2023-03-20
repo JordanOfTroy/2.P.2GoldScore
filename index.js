@@ -8,6 +8,7 @@ let addScoreModal = document.getElementById('addScoreModal')
 let modalHeader = document.getElementById('addScoreModalLabel')
 let IdCount = 0
 let scoreButton = document.getElementById('scoreButton')
+let endgameBody = document.getElementById('endGameModalBody')
 
 const PRO = 'pro'
 const CHAMP = 'champion'
@@ -214,6 +215,21 @@ function updatePlayerScore () {
     })
 }
 
+function showEndGameModal(arr) {
+
+    let parentEle = document.getElementById('endGameModalBody')
+    let sortedArr = arr.sort((a, b) => a.calcScore > b.calcScore ? 1 : -1)
+    console.log(sortedArr)
+    sortedArr.forEach((ele, ind) => {
+     
+        let html = document.createElement('p')
+        html.innerText = `${ele.player} | score: ${ele.calcScore} | Place: ${ind+1}`
+
+        parentEle.appendChild(html)
+    })   
+    
+    
+}
 
 playGolfButton.addEventListener('click', () => {
     let playerNamesArr = Array.from(document.getElementsByClassName('playerName'))
@@ -225,7 +241,6 @@ playGolfButton.addEventListener('click', () => {
         let playerObj = {}
         playerObj.name = player.value
         playerObj.tee = playerTeeBoxArr[ind].value
-        console.log(playerObj)
         players.push(playerObj)
     })
 
@@ -324,14 +339,15 @@ scoreButton.addEventListener('click', () => {
         let playerScoreValue = stripOutValues(playerScores).reduce(addValues)
 
         outcomeArr.push({
-            player: player,
+            player: player.name,
             HCP: HCPsValue,
-            playerScore: playerScoreValue
+            playerScore: playerScoreValue,
+            calcScore: playerScoreValue - HCPsValue
         })
         
     })
 
-    console.log(outcomeArr)
+    showEndGameModal(outcomeArr)
 })
 
 getGolfScore() ? showScoreCard(scoreCard) : console.log('no score card')
