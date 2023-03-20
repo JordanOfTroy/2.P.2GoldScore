@@ -7,6 +7,8 @@ let scoreCard = document.getElementById('scoreCard')
 let addScoreModal = document.getElementById('addScoreModal')
 let modalHeader = document.getElementById('addScoreModalLabel')
 let IdCount = 0
+let scoreButton = document.getElementById('scoreButton')
+let endgameBody = document.getElementById('endGameModalBody')
 
 const PRO = 'pro'
 const CHAMP = 'champion'
@@ -75,7 +77,7 @@ function addTeaboxYardage (parentEle, siblingEle, arr, str) {
             if (box.teeType === str) {
                 let yardageBox = document.createElement('td')
                 yardageBox.innerText = box.yards
-                yardageBox.setAttribute('class', 'subtleHeader')
+                yardageBox.setAttribute('class', 'subtleHeader teabox')
                 
                 teeBoxYardage.appendChild(yardageBox)
             } 
@@ -85,7 +87,7 @@ function addTeaboxYardage (parentEle, siblingEle, arr, str) {
     parentEle.insertBefore(teeBoxYardage, siblingEle)
 }
 
-function addHCP(parentEle, siblingEle, arr, str) {
+function addHCP(parentEle, siblingEle, arr, str, player) {
     let hcpBox = document.createElement('tr')
     
     let hcpHeader = document.createElement('th')
@@ -98,7 +100,8 @@ function addHCP(parentEle, siblingEle, arr, str) {
         courseTeeBoxes.forEach(box => {
             if (box.teeType === str) {
                 let hcp = document.createElement('td')
-                hcp.setAttribute('class', 'subtleHeader')
+                hcp.setAttribute('class', 'subtleHeader hcp')
+                hcp.setAttribute('data-hcp-for', `${player}`)
                 hcp.innerText = box.hcp
 
                 hcpBox.appendChild(hcp)
@@ -119,7 +122,7 @@ function addScoreBoxes (parentEle, scoresArr, len) {
 function showScoreCard (parentEle) {
     let currentGame = getGolfScore()[0]
     let table = document.createElement('table')
-    table.setAttribute('class', 'scoreTable')
+    table.setAttribute('class', 'scoreTable table')
     let holes = document.createElement('tr')
     let par = document.createElement('tr')
     let holesHeader = document.createElement('th')
@@ -150,9 +153,9 @@ function showScoreCard (parentEle) {
         playerRow.appendChild(playerHeader)
         table.appendChild(playerRow)
         
-        addScoreBoxes(playerRow, scores, currentGame.course.holes.length)
+        addScoreBoxes(playerRow, scores, currentGame.course.holes.length, name)
         addTeaboxYardage(table, playerRow, currentGame.course.holes, tee)
-        addHCP(table, playerRow, currentGame.course.holes, tee)
+        addHCP(table, playerRow, currentGame.course.holes, tee, name)
     })
     
     parentEle.appendChild(table)
@@ -212,12 +215,25 @@ function updatePlayerScore () {
     })
 }
 
+function showEndGameModal(arr) {
+
+    let parentEle = document.getElementById('endGameModalBody')
+    let sortedArr = arr.sort((a, b) => a.calcScore > b.calcScore ? 1 : -1)
+    console.log(sortedArr)
+    sortedArr.forEach((ele, ind) => {
+     
+        let html = document.createElement('p')
+        html.innerText = `${ele.player} | score: ${ele.calcScore} | Place: ${ind+1}`
+
+        parentEle.appendChild(html)
+    })   
+    
+    
+}
 
 playGolfButton.addEventListener('click', () => {
     let playerNamesArr = Array.from(document.getElementsByClassName('playerName'))
-    // console.log(playerNamesArr)
     let playerTeeBoxArr = Array.from(document.getElementsByClassName('teeBox'))
-    // console.log(playerTeeBoxArr)
     let course = courseSelector.value 
     let players = []
 
@@ -225,24 +241,15 @@ playGolfButton.addEventListener('click', () => {
         let playerObj = {}
         playerObj.name = player.value
         playerObj.tee = playerTeeBoxArr[ind].value
-        console.log(playerObj)
         players.push(playerObj)
     })
 
     getCourse({course, players})
 })
-// playGolfButton.addEventListener('click', () => {
-//     let playersArr = Array.from(document.getElementsByClassName('playerName'))
-//     let course = courseSelector.value 
-//     let players = []
-//     playersArr.forEach(player => players.push(player.value))
-//     getCourse({course, players})
-// })
-
 
 addNewPlayerButton.addEventListener('click', () => {
     let playerDiv = document.createElement('div')
-    playerDiv.setAttribute('class', 'playerInput d-flex flex-column')
+    playerDiv.setAttribute('class', 'playerInput d-flex flex-column m-1')
 
     let newPlayerInput = document.createElement('input')
     newPlayerInput.setAttribute('class', 'playerName')
@@ -285,7 +292,6 @@ addNewPlayerButton.addEventListener('click', () => {
     playerInputs.appendChild(playerDiv)
 })
 
-
 addScoreModal.addEventListener('shown.bs.modal', (e) => {
     let scoreBox = e.relatedTarget
     let selectedPlayer = scoreBox.getAttribute('data-player-name')
@@ -299,7 +305,49 @@ addScoreModal.addEventListener('shown.bs.modal', (e) => {
 
     document.getElementById('addNewScoreButton').addEventListener('click', () => {
         updatePlayerScore()
+
     })
+})
+
+scoreButton.addEventListener('click', () => {
+    let players = getGolfScore()[0].players
+    let hcpArr = Array.from(document.querySelectorAll('.hcp'))
+    let playerScoresArr = Array.from(document.querySelectorAll('.scoreBox'))
+    let outcomeArr = []
+
+    function addValues (total, num) {
+        return total += num
+    }
+
+    function stripOutValues (arr) {
+        let values = []
+        arr.forEach((ele) => {
+            values.push(Number(ele.innerText))
+        })
+        return values
+    }
+   
+    players.forEach((player, ind) => {
+        let HCPs = hcpArr.filter((ele) => {
+            return ele.dataset.hcpFor === player.name
+        })
+        let HCPsValue = stripOutValues(HCPs).reduce(addValues)
+        
+        let playerScores = playerScoresArr.filter((ele) => {
+            return ele.dataset.playerName === player.name
+        })
+        let playerScoreValue = stripOutValues(playerScores).reduce(addValues)
+
+        outcomeArr.push({
+            player: player.name,
+            HCP: HCPsValue,
+            playerScore: playerScoreValue,
+            calcScore: playerScoreValue - HCPsValue
+        })
+        
+    })
+
+    showEndGameModal(outcomeArr)
 })
 
 getGolfScore() ? showScoreCard(scoreCard) : console.log('no score card')
